@@ -1,0 +1,12 @@
+site=${jpf-qilura}../site.properties
+classpath=${jpf-qilura}/build/examples;{jpf-qilura}/build/main
+symbolic.dp=z3
+target=plas.SanityCheck1
+secure.method=plas.SanityCheck1.func(high)
+vm.storage.class=nil
+
+#ReliabilityListener:
+symbolic.reliability.tmpDir=/homes/qsp30/Programs/jpf/jpf-qilura/build/tmp
+symbolic.reliability.omegaPath=/homes/qsp30/Programs/omega/bin/oc
+symbolic.reliability.lattePath=/homes/qsp30/Programs/latte-integrale-1.5.3/dest/bin/count
+symbolic.reliability.problemSettings=/homes/qsp30/Programs/jpf/jpf-qilura/src/examples/SanityCheck1.up

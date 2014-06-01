@@ -13,7 +13,7 @@
 			<arguments>
 				<dictionary>
 					<key>LaunchConfigHandle</key>
-					<value>&lt;project&gt;/.externalToolBuilders/New_Ant_Builder.launch</value>
+					<value>&lt;project&gt;/.externalToolBuilders/QILURA_Builder.launch</value>
 				</dictionary>
 			</arguments>
 		</buildCommand>

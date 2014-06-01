@@ -7,5 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/jpf-symbc"/>
 	<classpathentry kind="lib" path="lib/PathConditionsReliability-0.0.1-ALPHA.jar"/>
 	<classpathentry kind="lib" path="/jpf-symbc/lib/com.microsoft.z3.jar"/>
+	<classpathentry kind="lib" path="lib/jpf-utils.jar"/>
 	<classpathentry kind="output" path="build"/>
 </classpath>

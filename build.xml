@@ -124,7 +124,7 @@
   <target name="-compile-main" if="have_main">
     <mkdir dir="build/main"/>
     <!--TODO: remove src/examples from srcdir after configuring dynamically program inputs-->
-    <javac srcdir="src/main;src/examples" destdir="build/main" includeantruntime="false"
+    <javac srcdir="src/main" destdir="build/main" includeantruntime="false"
            debug="${debug}" source="${src_level}" deprecation="${deprecation}"
            classpathref="lib.path" />
   </target>
