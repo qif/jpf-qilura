@@ -1,6 +1,5 @@
 site=${jpf-qilura}../site.properties
-#classpath=${jpf-qilura}/build/examples;{jpf-qilura}/build/main
-classpath=/home/qsp/Programs/jpf/jpf-qilura/build/examples;/home/qsp/Programs/jpf/jpf-qilura/build/main
+classpath=${jpf-qilura}/build/examples;{jpf-qilura}/build/main
 symbolic.dp=z3
 target=plas.ImplicitFlow
 secure.method=plas.ImplicitFlow.func(high)
