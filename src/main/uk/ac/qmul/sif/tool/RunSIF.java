@@ -69,9 +69,16 @@ public class RunSIF extends gov.nasa.jpf.tool.Run {
 		// int end = secMethod.indexOf(')');
 		String symMethod = secMethod.substring(0, start + 1)
 				+ secMethod.substring(start + 1, secMethod.length())
-						.replaceAll("high", "sym").replaceAll("low", "sym");
+						.replaceAll("high", "sym");
+		if("qualitative".equals(conf.getProperty("symbolic.sif.analysis"))){
+			conf.setProperty("listener", "uk.ac.qmul.sif.SelfCompListener");
+			symMethod.replaceAll("low", "sym");
+		}
+		else{
+			conf.setProperty("listener", "uk.ac.qmul.sif.QiluraListener");
+			symMethod.replaceAll("low", "con");
+		}
 		conf.setProperty("symbolic.method", symMethod);
-		conf.setProperty("listener", "uk.ac.qmul.sif.SelfCompListener");
 	}
 
 	public static int getOptions(String[] args) {
