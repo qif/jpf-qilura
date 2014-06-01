@@ -1,12 +1,12 @@
-site=${jpf-sif}../site.properties
-classpath=${jpf-sif}/build/examples;{jpf-sif}/build/main
+site=${jpf-qilura}../site.properties
+classpath=$${jpf-qilura}/build/examples;${jpf-qilura}/build/main
 symbolic.dp=z3
 target=plas.TenRandomOutputs
 secure.method=plas.TenRandomOutputs.func(high)
 vm.storage.class=nil
 
 #ReliabilityListener:
-symbolic.reliability.tmpDir=/homes/qsp30/Programs/jpf/jpf-sif/build/tmp
+symbolic.reliability.tmpDir=${jpf-qilura}/build/tmp
 symbolic.reliability.omegaPath=/homes/qsp30/Programs/omega/bin/oc
 symbolic.reliability.lattePath=/homes/qsp30/Programs/latte-integrale-1.5.3/dest/bin/count
-symbolic.reliability.problemSettings=/homes/qsp30/Programs/jpf/jpf-sif/src/examples/TenRandomOutputs.up
+symbolic.reliability.problemSettings=${jpf-qilura}/src/examples/TenRandomOutputs.up

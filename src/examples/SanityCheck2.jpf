@@ -6,7 +6,7 @@ secure.method=plas.SanityCheck2.func(high#low)
 vm.storage.class=nil
 
 #ReliabilityListener:
-symbolic.reliability.tmpDir=/homes/qsp30/Programs/jpf/jpf-qilura/build/tmp
+symbolic.reliability.tmpDir=${jpf-qilura}/build/tmp
 symbolic.reliability.omegaPath=/homes/qsp30/Programs/omega/bin/oc
 symbolic.reliability.lattePath=/homes/qsp30/Programs/latte-integrale-1.5.3/dest/bin/count
-symbolic.reliability.problemSettings=/homes/qsp30/Programs/jpf/jpf-qilura/src/examples/SanityCheck2.up
+symbolic.reliability.problemSettings=${jpf-qilura}/src/examples/SanityCheck2.up
