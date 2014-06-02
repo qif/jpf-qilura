@@ -8,18 +8,17 @@ package plas;
 
 public class SanityCheck1 {
 	
-	public int func(int H){
-		int base, O;
-		base = 0x00001000;
+	public int func(int H, int L){
+		int O;
 		if (H < 16)
-			O = base + H;
+			O = L + H;
 		else
-			O = base;
+			O = L;
 		return O;		
 	}
 	
 	public static void main(String[] args) {
 		SanityCheck1 o = new SanityCheck1();
-		o.func(1);
+		o.func(1,0x00001000);
 	}
 }
