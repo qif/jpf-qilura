@@ -1,7 +1,7 @@
 QILURA
 ======
 
-**Q**uantify **I**nformation **L**eaks **U**sing **R**eliability **A**nalysis
+__Q__uantify __I__nformation __L__eaks __U__sing __R__eliability __A__nalysis
 
 Description
 -----------
@@ -21,7 +21,7 @@ In the root folder of the JPF toolsets, edit the `site.properties` file as follo
         extensions+=,${jpf-symbc}
         extensions+=,${jpf-qilura} 
         
-Download **jpf-qilura** from the github repository, then run:  
+Download __jpf-qilura__ from the github repository, then run:  
 
         ant build
 
