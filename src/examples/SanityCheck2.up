@@ -1,8 +1,7 @@
 domain{
-	H_1_SYMINT : 0,100;
-	L_2_SYMINT : 0,100;		
+	H_1_SYMINT : 0,1000000;	
 };
 
 usageProfile{
-	H_1_SYMINT==H_1_SYMINT && L_2_SYMINT==L_2_SYMINT : 100/100;
+	H_1_SYMINT==H_1_SYMINT : 100/100;
 };

@@ -338,9 +338,13 @@ public class QiluraListener extends SelfCompListener
 										lstOfPaths.add(sp);
 										// add Antonio's formatting PC
 										String antoPath = PrefixConverter.cleanExpr(pc.header.toString());
-										//if (sp.checkPath() == SymbolicPath.DIRECT_TAINT){
+										
+										/* Corina suggested to ask output constraints to PC, but it doesn't work
+										if (sp.checkPath() == SymbolicPath.DIRECT_TAINT){
 											antoPath = antoPath + " &&\n" + "O_1_SYMINT = " + PrefixConverter.cleanExpr(result.toString());
-										//}
+										}
+										//*/	
+											
 										lstOfAntoPaths.add(antoPath);
 									} catch (Z3Exception e) {
 										e.printStackTrace();
@@ -363,7 +367,7 @@ public class QiluraListener extends SelfCompListener
 				break;
 			}
 
-			// printAllPaths();
+			printAllPaths();
 		
 			quantify();
 		}

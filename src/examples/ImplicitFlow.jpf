@@ -7,6 +7,6 @@ vm.storage.class=nil
 
 #ReliabilityListener:
 symbolic.reliability.tmpDir=${jpf-qilura}/build/tmp
-symbolic.reliability.omegaPath=/homes/qsp30/Programs/omega/bin/oc
-symbolic.reliability.lattePath=/homes/qsp30/Programs/latte-integrale-1.5.3/dest/bin/count
+symbolic.reliability.omegaPath=/home/qsp/Programs/omega/bin/oc
+symbolic.reliability.lattePath=/home/qsp/Programs/latte-integrale-1.5.3/dest/bin/count
 symbolic.reliability.problemSettings=${jpf-qilura}/src/examples/ImplicitFlow.up
