@@ -33,24 +33,13 @@ import gov.nasa.jpf.vm.ThreadInfo;
 import gov.nasa.jpf.vm.Types;
 import gov.nasa.jpf.vm.VM;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
-import name.filieri.antonio.jpf.analysis.Analyzer;
-import name.filieri.antonio.jpf.analysis.SequentialAnalyzer;
-import name.filieri.antonio.jpf.domain.ProblemSetting;
-import name.filieri.antonio.jpf.utils.BigRational;
-import name.filieri.antonio.jpf.utils.Configuration;
-
-import org.antlr.runtime.RecognitionException;
-
-import phan.quocsang.jpf.pc.PrefixConverter;
 import phan.quocsang.jpf.pc.Z3Converter;
 import phan.quocsang.jpf.pc.Z3Visitor;
 
@@ -74,23 +63,20 @@ public class SelfCompListener extends PropertyListenerAdapter
 	 * Locals to preserve the value that was held by JPF prior to changing it in
 	 * order to turn off state matching during symbolic execution
 	 */
-	private boolean retainVal = false;
-	private boolean forcedVal = false;
+	protected boolean retainVal = false;
+	protected boolean forcedVal = false;
 
-	private Map<String, MethodSummary> allSummaries;
-	private ArrayList<SymbolicPath> lstOfPaths;
-	private ArrayList<String> lstOfAntoPaths;
+	protected Map<String, MethodSummary> allSummaries;
+	protected ArrayList<SymbolicPath> lstOfPaths;
 	// TODO: merge the setOfSymVals and lstOfSymVals
-	private Hashtable<String,Expr> setOfSymVals;
-	private String[] lstOfSymVals;
+	protected Hashtable<String,Expr> setOfSymVals;
+	protected String[] lstOfSymVals;
 	//
-	private String[] secureMask;
+	protected String[] secureMask;
 
-	private static final int SECURE = 0;
-	private static final int INSECURE = 1;
-	private static final int UNDECIDABLE = 2;
-
-	private int N = 0;
+	protected static final int SECURE = 0;
+	protected static final int INSECURE = 1;
+	protected static final int UNDECIDABLE = 2;
 
 	Config conf;
 	Context ctx;
@@ -98,7 +84,6 @@ public class SelfCompListener extends PropertyListenerAdapter
 	public SelfCompListener(Config config, JPF jpf) {
 		allSummaries = new HashMap<String, MethodSummary>();
 		lstOfPaths = new ArrayList<SymbolicPath>();
-		lstOfAntoPaths = new ArrayList<String>();
 		setOfSymVals = new Hashtable<String,Expr>();
 		conf = config;
 		// get the security mask
@@ -378,12 +363,6 @@ public class SelfCompListener extends PropertyListenerAdapter
 									SymbolicPath sp = new SymbolicPath(z3pc,
 													(ArithExpr) visitor.getExpression());
 									lstOfPaths.add(sp);
-									// add Antonio's formatting PC
-									String antoPath = PrefixConverter.cleanExpr(pc.header.toString());
-									//if (sp.checkPath() == SymbolicPath.DIRECT_TAINT){
-										antoPath = antoPath + " &&\n" + "O_1_SYMINT = " + PrefixConverter.cleanExpr(result.toString());
-									//}
-									lstOfAntoPaths.add(antoPath);
 								} catch (Z3Exception e) {
 									e.printStackTrace();
 								}
@@ -393,24 +372,6 @@ public class SelfCompListener extends PropertyListenerAdapter
 				}
 			}
 		}
-	}
-
-	private String cleanConstraint(String constraint) {
-		/*
-		 * String clean = constraint.replaceAll("\\s+", ""); clean =
-		 * clean.replaceAll("CONST_(\\d+)", "$1"); clean =
-		 * clean.replaceAll("CONST_-(\\d+)", "-$1"); return clean; //
-		 */
-
-		// * New function from Antonio
-		String clean = constraint.replaceAll("\\s+", "");
-		clean = clean.replaceAll("CONST_(\\d+)", "$1");
-		clean = clean.replaceAll("CONST_-(\\d+)", "-$1");
-		clean = clean.replaceAll("\\[", "lp");
-		clean = clean.replaceAll("\\]", "rp");
-		clean = clean.replaceAll("\\.", "d");
-		return clean;
-		// clean
 	}
 
 	public void searchFinished(Search search) {
@@ -423,88 +384,10 @@ public class SelfCompListener extends PropertyListenerAdapter
 			break;
 		}
 
-		printAllPaths();
+		// printAllPaths();
 		
-		// verifyNonInterference();
-
-		quantify();
+		verifyNonInterference();
 	}
-
-	private void quantify() {
-
-		try {
-		labelPaths();
-		}
-		catch(Z3Exception e){
-			e.printStackTrace();
-		}
-		
-		HashSet<String> set = new HashSet<String>();
-		for (int i = 0; i < lstOfPaths.size(); i++) {
-			SymbolicPath spi = lstOfPaths.get(i);
-			String pci = lstOfAntoPaths.get(i);
-			switch (spi.getTag()) {
-			case SymbolicPath.INDIRECT_TAINT:
-				N++;
-				break;
-			case SymbolicPath.DIRECT_TAINT:
-				set.add(pci);
-				break;
-			default:
-				System.out.println(">>>Secure labeled " + spi.getTag());
-			}
-		}
-
-		if (set.isEmpty()) { // program doesn't leak via direct flow
-			if (N == 0)
-				System.out.println("Program is secure");
-			else
-				// program leaks via implicit flow
-				System.out.println("Maximum leakage is " + +Math.log(N)
-						/ Math.log(2) + " bits");
-			return;
-		}
-		// program leaks via direct flow:
-		// leak = leak via implicit flow + leak via direct flow
-		Configuration configuration = new Configuration();
-		configuration.setTemporaryDirectory(conf
-				.getProperty("symbolic.reliability.tmpDir"));
-		configuration.setOmegaExectutablePath(this.conf
-				.getProperty("symbolic.reliability.omegaPath"));
-		configuration.setLatteExecutablePath(this.conf
-				.getProperty("symbolic.reliability.lattePath"));
-
-		ProblemSetting problemSettings = null;
-		String problemSettingsPath = conf
-				.getProperty("symbolic.reliability.problemSettings");
-		if (problemSettingsPath == null) {
-			throw new RuntimeException(
-					"Problem settings must be dummy or privided by file.");
-		}
-		try {
-			problemSettings = ProblemSetting.loadFromFile(problemSettingsPath);
-			System.out.println("Problem settings loaded from: "
-					+ problemSettingsPath);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (RecognitionException e) {
-			e.printStackTrace();
-		}
-
-		try {
-			Analyzer analyzer = new SequentialAnalyzer(configuration,
-					problemSettings.getDomain(),
-					problemSettings.getUsageProfile(), 1);
-			BigRational numberOfPoints = analyzer.countPointsOfSetOfPCs(set);
-			System.out.println(">>>Leakage of information is: "
-					+ Math.log(N + Integer.parseInt(numberOfPoints.toString()))
-					/ Math.log(2) + " bits");
-			analyzer.terminate();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 
 	private void verifyNonInterference() {
 
@@ -608,89 +491,8 @@ public class SelfCompListener extends PropertyListenerAdapter
 
 		return UNDECIDABLE;
 	}
-
-
-	private void labelPaths() throws Z3Exception {
-
-		for (Iterator<SymbolicPath> i = lstOfPaths.iterator(); i.hasNext();) {
-			SymbolicPath sp = (SymbolicPath) i.next();
-			sp.checkPath();
-		}
-		
-		Expr[] high = new Expr[lstOfSymVals.length];
-		Expr[] rename = new Expr[lstOfSymVals.length];
-		int index = 0;
-		for (int i = 0; i < lstOfSymVals.length; i++) {
-			if (secureMask[i].equals("high")) {
-				String name = lstOfSymVals[i];
-				Expr val = setOfSymVals.get(name);
-				high[index] = val;
-				
-				if(name.indexOf("_SYMINT") > -1){
-					rename[index] = ctx.MkConst(ctx.MkSymbol("R_" + name), ctx.IntSort());
-					index++;
-				}
-				if(name.indexOf("_SYMREAL") > -1){
-					rename[index] = ctx.MkConst(ctx.MkSymbol("R_" + name), ctx.RealSort());
-					index++;
-				}
-			}
-		}
-
-		// System.out.println("There are " + lstOfPaths.size() + " symbolic paths");
-		
-		for (int i = 0; i < lstOfPaths.size() - 1; i++) {
-			SymbolicPath spi = lstOfPaths.get(i);
-			for (int j = i + 1; j < lstOfPaths.size(); j++) {
-				SymbolicPath spj = lstOfPaths.get(j).rename(high,rename);
-
-				int it = spi.getTag();
-				int jt = spj.getTag();
-				if ((it == SymbolicPath.POSSIBLE_TAINT || jt == SymbolicPath.POSSIBLE_TAINT)
-						&& (it != SymbolicPath.CLEAN_PATH)
-						&& (jt != SymbolicPath.CLEAN_PATH)) {
-					try {
-						BoolExpr pathEquivalence = ctx.MkAnd(new BoolExpr[]{ spi.getPathCondition(), spj.getPathCondition(), ctx.MkNot(ctx.MkEq(spi.getSymbolicOutput(), spj.getSymbolicOutput()))});
-						// solve by z3
-						Goal goal = ctx.MkGoal(true, true, false);
-						goal.Assert(pathEquivalence);
-						Solver solver = ctx.MkSolver();
-
-				        for (BoolExpr a : goal.Formulas())
-				            solver.Assert(a);
-
-				        // System.out.println(goal);
-				        
-				        if (solver.Check() == Status.SATISFIABLE){
-				        	lstOfPaths.get(i).taint();
-							lstOfPaths.get(j).taint();
-							if(false) // TODO: edit later
-							{
-					        	Model m = solver.Model();
-					        	System.out.println("*******************************");
-					        	System.out.println("Model of pair [" + i + "," + j + "] is: ");
-					        	System.out.println(m);
-					        	System.out.println("*******************************");
-							}
-						}
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}
-
-	}
 	
-	private void printAllPaths() {
-		for (String sp : lstOfAntoPaths) {
-			System.out.println("***********************************");
-			System.out.println(sp);
-			System.out.println("***********************************");
-		}
-	}
-	
-	private class SymbolicPath {
+	protected class SymbolicPath {
 		BoolExpr pc; // path condition
 		ArithExpr so; // method summary
 
