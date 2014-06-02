@@ -458,8 +458,13 @@ public class QiluraListener extends SelfCompListener
 				sp.checkPath();
 			}
 			
-			Expr[] high = new Expr[lstOfSymVals.length];
-			Expr[] rename = new Expr[lstOfSymVals.length];
+			int numHigh = 0;
+			
+			for(String mask: secureMask)
+				if ("high".equals(mask)) numHigh++;
+			
+			Expr[] high = new Expr[numHigh];
+			Expr[] rename = new Expr[numHigh];
 			int index = 0;
 			for (int i = 0; i < lstOfSymVals.length; i++) {
 				if (secureMask[i].equals("high")) {
