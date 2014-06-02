@@ -1,5 +1,5 @@
 site=${jpf-qilura}../site.properties
-classpath=$${jpf-qilura}/build/examples;${jpf-qilura}/build/main
+classpath=${jpf-qilura}/build/examples;${jpf-qilura}/build/main
 symbolic.dp=z3
 target=plas.TenRandomOutputs
 secure.method=plas.TenRandomOutputs.func(high)
