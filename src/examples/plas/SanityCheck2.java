@@ -19,6 +19,6 @@ public class SanityCheck2 {
 	
 	public static void main(String[] args) {
 		SanityCheck2 o = new SanityCheck2();
-		o.func(1,1);
+		o.func(1,0x7ffffffa);
 	}
 }

@@ -10,7 +10,7 @@ public class SanityCheck1 {
 	
 	public int func(int H){
 		int base, O;
-		base = 8;
+		base = 0x00001000;
 		if (H < 16)
 			O = base + H;
 		else

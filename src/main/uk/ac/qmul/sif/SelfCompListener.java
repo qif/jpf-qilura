@@ -383,8 +383,6 @@ public class SelfCompListener extends PropertyListenerAdapter
 			lstOfSymVals = methodSummary.getSymValues().split(",");
 			break;
 		}
-
-		// printAllPaths();
 		
 		verifyNonInterference();
 	}
