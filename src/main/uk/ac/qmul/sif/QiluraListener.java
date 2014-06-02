@@ -32,11 +32,13 @@ import gov.nasa.jpf.vm.ThreadInfo;
 import gov.nasa.jpf.vm.Types;
 import gov.nasa.jpf.vm.VM;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
@@ -55,7 +57,6 @@ import phan.quocsang.jpf.pc.Z3Visitor;
 
 import com.microsoft.z3.ArithExpr;
 import com.microsoft.z3.BoolExpr;
-import com.microsoft.z3.Context;
 import com.microsoft.z3.Expr;
 import com.microsoft.z3.Goal;
 import com.microsoft.z3.Model;
@@ -367,11 +368,53 @@ public class QiluraListener extends SelfCompListener
 				break;
 			}
 
-			printAllPaths();
-		
+			// printAllPaths();
+			createUserProfile();
 			quantify();
 		}
 
+		private void createUserProfile(){
+			StringBuilder sb = new StringBuilder();
+			sb.append("domain{\n");
+			int i; int count = 0;
+			for (i = 0; i < lstOfSymVals.length; i++) {
+				if (secureMask[i].equals("high")) {
+					String name = lstOfSymVals[i];
+					count++;
+					sb.append("\t" + name +  " : 0,1000000;\n");
+				}	
+			}
+			sb.append("};\n\n");
+			sb.append("usageProfile{\n\t");
+			int count2 = 0;
+			for (i = 0; i < lstOfSymVals.length; i++) {
+				if (secureMask[i].equals("high")) {
+					String name = lstOfSymVals[i];
+					sb.append(name + "==" + name);
+					count2++;
+					if (count2 < count)
+						sb.append(" && ");
+				}	
+			}
+			sb.append(" : 100/100;\n};");
+			// write user profile to file
+			String tmpDir = conf.getProperty("symbolic.reliability.tmpDir");
+			String target = conf.getProperty("target");
+			String upFile = tmpDir + "/" + target + ".up";
+			Writer writer = null;
+
+			try {
+			    writer = new BufferedWriter(new OutputStreamWriter(
+			          new FileOutputStream(upFile), "utf-8"));
+			    writer.write(sb.toString());
+			    conf.setProperty("symbolic.reliability.problemSettings",upFile);
+			} catch (IOException ex) {
+			  // report
+			} finally {
+			   try {writer.close();} catch (Exception ex) {}
+			}
+		}
+		
 		private void quantify() {
 
 			try {

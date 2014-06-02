@@ -1,7 +1,0 @@
-domain{
-	H_1_SYMINT : 0,9;	
-};
-
-usageProfile{
-	H_1_SYMINT==H_1_SYMINT : 100/100;
-};
