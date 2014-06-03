@@ -33,6 +33,7 @@ import gov.nasa.jpf.vm.Types;
 import gov.nasa.jpf.vm.VM;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -50,6 +51,7 @@ import name.filieri.antonio.jpf.utils.BigRational;
 import name.filieri.antonio.jpf.utils.Configuration;
 
 import org.antlr.runtime.RecognitionException;
+import org.apache.commons.io.FileUtils;
 
 import phan.quocsang.jpf.pc.PrefixConverter;
 import phan.quocsang.jpf.pc.Z3Converter;
@@ -370,7 +372,18 @@ public class QiluraListener extends SelfCompListener
 
 			// printAllPaths();
 			createUserProfile();
+			
 			quantify();
+			
+			// clean directory
+			String tmpDir = conf.getProperty("symbolic.reliability.tmpDir");
+			try {
+				FileUtils.cleanDirectory(new File(tmpDir));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} 
+			
 		}
 
 		private void createUserProfile(){

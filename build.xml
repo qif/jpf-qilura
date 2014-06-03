@@ -156,7 +156,7 @@
   <!-- ======================= MISC SECTION ================================ -->
 
   <!-- build jars -->
-  <target name="build" depends="compile,-jar-jvm,-jar-tool"
+  <target name="build" depends="compile,-jar-jvm,-jar-tool,create-tmp-dir"
         description="generate the ${ant.project.name} jar files" >
   </target>
   
@@ -168,6 +168,16 @@
       </manifest>
     </jar>
     <chmod file="build/${ant.project.name}.jar" perm="ugo+rx"/>
+  </target>
+
+  <!-- Target #1. Set property value depends on check result -->
+  <target name="check-dir">
+    <available property="tmp.dir" file="build/tmp" type="dir"/>
+  </target>
+ 
+  <!-- target #2. Create dir 'asjava' if doesn't exist -->
+  <target name="create-tmp-dir" depends="check-dir" unless="tmp.dir">
+    <mkdir dir="build/tmp"/>
   </target>
 
   <target name="-jar-tool" if="have_jvm_code">
