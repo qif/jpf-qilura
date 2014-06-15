@@ -40,8 +40,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
 
-import phan.quocsang.jpf.pc.Z3Converter;
-import phan.quocsang.jpf.pc.Z3Visitor;
+import qs.phan.z3.Z3Converter;
+import qs.phan.z3.Z3Visitor;
 
 import com.microsoft.z3.ArithExpr;
 import com.microsoft.z3.BoolExpr;
@@ -443,7 +443,9 @@ public class SelfCompListener extends PropertyListenerAdapter
 		}
 		Goal goal = ctx.MkGoal(true, true, false);
 		goal.Assert(selfcomp);
-		Solver solver = ctx.MkSolver();
+		
+		//TODO: detect the logic from the symbolic variable
+		Solver solver = ctx.MkSolver("QF_LIA");
 
         for (BoolExpr a : goal.Formulas())
             solver.Assert(a);

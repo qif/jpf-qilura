@@ -53,9 +53,9 @@ import name.filieri.antonio.jpf.utils.Configuration;
 import org.antlr.runtime.RecognitionException;
 import org.apache.commons.io.FileUtils;
 
-import phan.quocsang.jpf.pc.PrefixConverter;
-import phan.quocsang.jpf.pc.Z3Converter;
-import phan.quocsang.jpf.pc.Z3Visitor;
+import qs.phan.smtlib2.SMTLIB2Converter;
+import qs.phan.z3.Z3Converter;
+import qs.phan.z3.Z3Visitor;
 
 import com.microsoft.z3.ArithExpr;
 import com.microsoft.z3.BoolExpr;
@@ -340,7 +340,7 @@ public class QiluraListener extends SelfCompListener
 														(ArithExpr) visitor.getExpression());
 										lstOfPaths.add(sp);
 										// add Antonio's formatting PC
-										String antoPath = PrefixConverter.cleanExpr(pc.header.toString());
+										String antoPath = SMTLIB2Converter.cleanExpr(pc.header.toString());
 										
 										/* Corina suggested to ask output constraints to PC, but it doesn't work
 										if (sp.checkPath() == SymbolicPath.DIRECT_TAINT){
@@ -560,7 +560,9 @@ public class QiluraListener extends SelfCompListener
 							// solve by z3
 							Goal goal = ctx.MkGoal(true, true, false);
 							goal.Assert(pathEquivalence);
-							Solver solver = ctx.MkSolver();
+							
+							//TODO: detect the logic from the symbolic variable
+							Solver solver = ctx.MkSolver("QF_LIA");
 
 					        for (BoolExpr a : goal.Formulas())
 					            solver.Assert(a);
