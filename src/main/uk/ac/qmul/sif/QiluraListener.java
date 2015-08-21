@@ -534,11 +534,11 @@ public class QiluraListener extends SelfCompListener
 					high[index] = val;
 					
 					if(name.indexOf("_SYMINT") > -1){
-						rename[index] = ctx.MkConst(ctx.MkSymbol("R_" + name), ctx.IntSort());
+						rename[index] = ctx.mkConst(ctx.mkSymbol("R_" + name), ctx.mkIntSort());
 						index++;
 					}
 					if(name.indexOf("_SYMREAL") > -1){
-						rename[index] = ctx.MkConst(ctx.MkSymbol("R_" + name), ctx.RealSort());
+						rename[index] = ctx.mkConst(ctx.mkSymbol("R_" + name), ctx.mkRealSort());
 						index++;
 					}
 				}
@@ -557,25 +557,25 @@ public class QiluraListener extends SelfCompListener
 							&& (it != SymbolicPath.CLEAN_PATH)
 							&& (jt != SymbolicPath.CLEAN_PATH)) {
 						try {
-							BoolExpr pathEquivalence = ctx.MkAnd(new BoolExpr[]{ spi.getPathCondition(), spj.getPathCondition(), ctx.MkNot(ctx.MkEq(spi.getSymbolicOutput(), spj.getSymbolicOutput()))});
+							BoolExpr pathEquivalence = ctx.mkAnd(new BoolExpr[]{ spi.getPathCondition(), spj.getPathCondition(), ctx.mkNot(ctx.mkEq(spi.getSymbolicOutput(), spj.getSymbolicOutput()))});
 							// solve by z3
-							Goal goal = ctx.MkGoal(true, true, false);
-							goal.Assert(pathEquivalence);
+							Goal goal = ctx.mkGoal(true, true, false);
+							goal.add(pathEquivalence);
 							
 							//TODO: detect the logic from the symbolic variable
-							Solver solver = ctx.MkSolver("QF_LIA");
+							Solver solver = ctx.mkSolver("QF_LIA");
 
-					        for (BoolExpr a : goal.Formulas())
-					            solver.Assert(a);
+					        for (BoolExpr a : goal.getFormulas())
+					            solver.add(a);
 
 					        // System.out.println(goal);
 					        
-					        if (solver.Check() == Status.SATISFIABLE){
+					        if (solver.check() == Status.SATISFIABLE){
 					        	lstOfPaths.get(i).taint();
 								lstOfPaths.get(j).taint();
 								if(false) // TODO: edit later
 								{
-						        	Model m = solver.Model();
+						        	Model m = solver.getModel();
 						        	System.out.println("*******************************");
 						        	System.out.println("Model of pair [" + i + "," + j + "] is: ");
 						        	System.out.println(m);
