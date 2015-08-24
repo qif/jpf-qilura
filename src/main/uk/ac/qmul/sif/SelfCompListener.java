@@ -420,17 +420,17 @@ public class SelfCompListener extends PropertyListenerAdapter
 				high[index] = val;
 				
 				if(name.indexOf("_SYMINT") > -1){
-					rename[index] = ctx.MkConst(ctx.MkSymbol("R_" + name), ctx.IntSort());
+					rename[index] = ctx.mkConst(ctx.mkSymbol("R_" + name), ctx.mkIntSort());
 					index++;
 				}
 				if(name.indexOf("_SYMREAL") > -1){
-					rename[index] = ctx.MkConst(ctx.MkSymbol("R_" + name), ctx.RealSort());
+					rename[index] = ctx.mkConst(ctx.mkSymbol("R_" + name), ctx.mkRealSort());
 					index++;
 				}
 			}
 		}
 		
-		BoolExpr selfcomp = ctx.MkFalse();
+		BoolExpr selfcomp = ctx.mkFalse();
 		for (int i = 0; i < lstOfPaths.size() - 1; i++) {
 			for (int j = i + 1; j < lstOfPaths.size(); j++) {
 
@@ -438,31 +438,31 @@ public class SelfCompListener extends PropertyListenerAdapter
 				// second path is renamed
 				SymbolicPath spj = lstOfPaths.get(j).rename(high,rename);
 
-				BoolExpr path = ctx.MkAnd(new BoolExpr[]{ spi.getPathCondition(), spj.getPathCondition(), ctx.MkNot(ctx.MkEq(spi.getSymbolicOutput(), spj.getSymbolicOutput()))});
-				selfcomp = ctx.MkOr(new BoolExpr[] {selfcomp, path});
+				BoolExpr path = ctx.mkAnd(new BoolExpr[]{ spi.getPathCondition(), spj.getPathCondition(), ctx.mkNot(ctx.mkEq(spi.getSymbolicOutput(), spj.getSymbolicOutput()))});
+				selfcomp = ctx.mkOr(new BoolExpr[] {selfcomp, path});
 			}
 		}
-		Goal goal = ctx.MkGoal(true, true, false);
-		goal.Assert(selfcomp);
+		Goal goal = ctx.mkGoal(true, true, false);
+		goal.add(selfcomp);
 		
 		//TODO: detect the logic from the symbolic variable
-		Solver solver = ctx.MkSolver("QF_LIA");
+		Solver solver = ctx.mkSolver("QF_LIA");
 
-        for (BoolExpr a : goal.Formulas())
-            solver.Assert(a);
+        for (BoolExpr a : goal.getFormulas())
+            solver.add(a);
 
         // System.out.println(goal);
         
-        if (solver.Check() == Status.SATISFIABLE){
-        	Model m = solver.Model();
+        if (solver.check() == Status.SATISFIABLE){
+        	Model m = solver.getModel();
         	System.out.println("*******************************");
         	System.out.println("Model of self-composition is: ");
         	System.out.println(m);
         	System.out.println("*******************************");
-        	ctx.Dispose();
+        	ctx.dispose();
         	return false;
         }
-        ctx.Dispose();
+        ctx.dispose();
 		return true;
 	}
 
@@ -533,8 +533,8 @@ public class SelfCompListener extends PropertyListenerAdapter
 		public SymbolicPath rename(Expr[] high, Expr[]rename) throws Z3Exception{
 			BoolExpr pc1;
 			ArithExpr so1;
-			pc1 = (BoolExpr)pc.Substitute(high, rename);
-			so1 = (ArithExpr)so.Substitute(high, rename);
+			pc1 = (BoolExpr)pc.substitute(high, rename);
+			so1 = (ArithExpr)so.substitute(high, rename);
 			return new SymbolicPath(pc1, so1, tag);
 		}
 
