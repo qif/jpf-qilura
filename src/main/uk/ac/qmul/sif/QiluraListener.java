@@ -492,13 +492,13 @@ public class QiluraListener extends SelfCompListener
 
 			try {
 				Analyzer analyzer = new SequentialAnalyzer(configuration,
-						problemSettings.getDomain(),
+				 		problemSettings.getDomain(),
 						problemSettings.getUsageProfile(), 1);
 				BigRational numberOfPoints = analyzer.countPointsOfSetOfPCs(set);
 				System.out.println(">>>Leakage of information is: "
 						+ Math.log(N + Integer.parseInt(numberOfPoints.toString()))
 						/ Math.log(2) + " bits");
-				analyzer.terminate();
+				// analyzer.terminate();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

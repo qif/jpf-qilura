@@ -60,7 +60,7 @@
   <property name="src_level"     value="6"/>
   <property name="debug"         value="on"/>
   <property name="deprecation"   value="on"/>
-
+  <property environment="aZ3env"/> 
 
   <!-- generic classpath settings -->
   <path id="lib.path">
@@ -165,6 +165,7 @@
       <fileset dir="build/main"/>	
       <manifest>
 	<attribute name="Main-Class" value="uk.ac.qmul.sif.tool.RunSIF" />
+  <attribute name="Class-PATH" value="${aZ3env.Z3_HOME}/com.microsoft.z3.jar" />
       </manifest>
     </jar>
     <chmod file="build/${ant.project.name}.jar" perm="ugo+rx"/>
