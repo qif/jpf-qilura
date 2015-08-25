@@ -376,7 +376,10 @@ public class QiluraListener extends SelfCompListener
 			
 			quantify();
 			
-			// clean directory
+			// cleanDirectory();
+		}
+
+		private void cleanDirectory(){
 			String tmpDir = conf.getProperty("symbolic.reliability.tmpDir");
 			try {
 				FileUtils.cleanDirectory(new File(tmpDir));
@@ -384,9 +387,8 @@ public class QiluraListener extends SelfCompListener
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} 
-			
 		}
-
+		
 		private void createUserProfile(){
 			StringBuilder sb = new StringBuilder();
 			sb.append("domain{\n");
@@ -498,7 +500,7 @@ public class QiluraListener extends SelfCompListener
 				System.out.println(">>>Leakage of information is: "
 						+ Math.log(N + Integer.parseInt(numberOfPoints.toString()))
 						/ Math.log(2) + " bits");
-				// analyzer.terminate();
+				analyzer.terminate();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
